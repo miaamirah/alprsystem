@@ -1,73 +1,81 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
 
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PlateTrack</title>
 
-                <div class="card-body">
-                    <form method="POST" action="{{ route('login') }}">
-                        @csrf
+    <!-- Fonts & SB Admin CSS -->
+    <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,400,600,700,800,900" rel="stylesheet">
+    <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+</head>
 
-                        <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
+<body style="background: url('{{ asset('img/traffic.jpg') }}') no-repeat center center fixed; background-size: cover;">
 
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-12 col-lg-12 col-md-9">
+                <div class="card o-hidden border-0 shadow-lg my-5" style="height: 600px;">
+                    <div class="card-body p-0 h-100">
+                        <div class="row h-100 g-0">
 
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
+                            <!-- Left: Logo -->
+                            <div class="col-6 d-flex align-items-center justify-content-center" style="background-color: #e0e0e0;">
+                                <img src="{{ asset('img/uniten.png') }}" alt="UNITEN Logo" style="max-width: 250px;">
                             </div>
-                        </div>
 
-                        <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
+                            <!-- Right: Login Form -->
+                            <div class="col-6 d-flex align-items-center justify-content-center" style="background-color: white;">
+                                <div class="p-5 w-100">
+                                    <div class="text-center mb-4">
+                                        <b><h1 class="h4 text-gray-900">Welcome to PlateTrack!</b> </h1>
+                                    </div>
 
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+                                    <!-- Connected to Laravel Auth -->
+                                    <form method="POST" action="{{ route('login') }}">
+                                        @csrf
 
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
+                                        <div class="form-group mb-3">
+                                            <input type="email" name="email" class="form-control form-control-user" placeholder="Enter Email Address..." required autofocus>
+                                        </div>
 
-                        <div class="row mb-3">
-                            <div class="col-md-6 offset-md-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                                        <div class="form-group mb-3">
+                                            <input type="password" name="password" class="form-control form-control-user" placeholder="Password" required>
+                                        </div>
 
-                                    <label class="form-check-label" for="remember">
-                                        {{ __('Remember Me') }}
-                                    </label>
+                                        <div class="form-group mb-3">
+                                            <div class="custom-control custom-checkbox small">
+                                                <input type="checkbox" name="remember" class="custom-control-input" id="remember">
+                                                <label class="custom-control-label" for="remember">Remember Me</label>
+                                            </div>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary btn-user btn-block">
+                                            Login
+                                        </button>
+
+                                        <div class="text-center mt-3">
+                                            <a class="small" href="{{ route('password.request') }}">Forgot Password?</a>
+                                        </div>
+                                    </form>
+
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="row mb-0">
-                            <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Login') }}
-                                </button>
-
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        {{ __('Forgot Your Password?') }}
-                                    </a>
-                                @endif
-                            </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-@endsection
+
+    <!-- Scripts -->
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+    <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+
+</body>
+</html>

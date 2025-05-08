@@ -1,3 +1,4 @@
+<!--template, sidebar to apply all pages-->
 <!DOCTYPE html>
 <html lang="en">
 
