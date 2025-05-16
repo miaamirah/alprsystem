@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\PlateController;
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -17,6 +17,8 @@ Route::get('/charts', function () {
 Route::get('/loginpage', function () {
     return view('loginpage');
 });
+
+Route::resource('plates', PlateController::class);
 
 Auth::routes();
 
