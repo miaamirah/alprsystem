@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PlateController;
+use App\Http\Controllers\VehicleLogController;
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -19,6 +20,7 @@ Route::get('/loginpage', function () {
 });
 
 Route::resource('plates', PlateController::class);
+Route::resource('vehicle-logs', VehicleLogController::class);
 
 Auth::routes();
 

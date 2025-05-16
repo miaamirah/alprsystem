@@ -25,8 +25,9 @@
 
     <div class="table-responsive">
         <!--table class="table table-bordered table-striped text-center"-->
-        <table class="table table-bordered text-center" style="width: 100%; font-size: 14px;">
-            <thead style="background-color:rgb(3, 62, 129); color: white; text-align: center;">
+        <table class="table table-bordered text-center" style="width: 98%; font-size: 14px; white-space: nowrap;">
+            <thead style="background-color:rgb(3, 62, 129);
+             color: white; text-align: center;">
                 <tr style="height: 60px;">
                     <th style="vertical-align: middle;">Entry time</th>
                     <th style="vertical-align: middle;">Exit time</th>
@@ -39,7 +40,7 @@
             </thead>
             <tbody style="background-color: white;">
                 @forelse ($plates as $plate)
-                    <tr class="{{ $plate->flagged ? 'table-success' : '' }}">
+                    <tr>
                         <td>{{ $plate->entry_time }}</td>
                         <td>{{ $plate->exit_time ?? '-' }}</td>
                         <td>{{ $plate->plate_text }}</td>
@@ -65,19 +66,20 @@
                         <!-- Reason -->
                         <td>{{ $plate->reason ?? '-' }}</td>
 
+                       <td class="text-center">
+                        <!-- View button -->
+                        <a href="{{ route('plates.show', $plate->id) }}" class="btn btn-info btn-sm me-2">View</a>
+
                         <!-- Edit button -->
-                        <td>
-                            <div class="d-flex justify-content-center gap-2">
-                                <a href="{{ route('plates.edit', $plate->id) }}" class="btn btn-sm btn-warning mr-1">Edit</a>
+                        <a href="{{ route('plates.edit', $plate->id) }}" class="btn btn-warning btn-sm me-2">Edit</a>
 
                         <!-- Delete button -->
-                                <form action="{{ route('plates.destroy', $plate->id) }}" method="POST" onsubmit="return confirm('Are you sure?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                                </form>
-                            </div>
-                        </td>
+                        <form action="{{ route('plates.destroy', $plate->id) }}" method="POST" class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
                     </tr>
                 @empty
                     <tr>

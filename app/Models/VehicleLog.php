@@ -10,15 +10,15 @@ class VehicleLog extends Model
     use HasFactory;
 
     protected $fillable = [
-        'vehicle_id',
+        'plate_id',
         'action',
         'message',
     ];
 
-    // Relationship: belongs to a vehicle
-    public function vehicle()
+    // Relationship: belongs to a vehicle plate
+    public function plate()
     {
-        return $this->belongsTo(Vehicle::class);
+        return $this->belongsTo(Plate::class, 'plate_id');
     }
 
     //To track who did the action

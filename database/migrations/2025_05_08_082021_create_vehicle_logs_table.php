@@ -9,9 +9,9 @@ return new class extends Migration {
     {
         Schema::create('vehicle_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('vehicle_id')->constrained()->onDelete('cascade');
-            $table->string('action');            // e.g. 'flagged', 'updated'
-            $table->text('message')->nullable(); // optional reason or note
+            $table->foreignId('plate_id')->constrained('plates')->onDelete('cascade');
+            $table->string('action');
+            $table->text('message')->nullable();
             $table->timestamps();
         });
     }

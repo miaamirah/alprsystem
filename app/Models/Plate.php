@@ -21,6 +21,6 @@ class Plate extends Model
 
     public function logs()
     {
-        return $this->hasMany(VehicleLog::class);
+        return $this->hasMany(VehicleLog::class,'plate_id');
     }
 }

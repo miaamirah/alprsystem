@@ -3,63 +3,43 @@
 namespace App\Http\Controllers;
 
 use App\Models\VehicleLog;
+use App\Models\Plate;
 use Illuminate\Http\Request;
 
 class VehicleLogController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $logs = VehicleLog::with('plate')->orderBy('created_at', 'desc')->get();
+    return view('vehicle_logs.index', compact('logs'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $plates = Plate::all();
+        return view('vehicle_logs.create', compact('plates'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'plate_id' => 'required|exists:plates,id',
+            'action' => 'required|string',
+            'message' => 'nullable|string',
+        ]);
+
+        VehicleLog::create([
+            'plate_id' => $request->plate_id,
+            'action' => $request->action,
+            'message' => $request->message,
+        ]);
+
+        return redirect()->route('vehicle-logs.index')->with('success', 'Log created.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(VehicleLog $vehicleLog)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(VehicleLog $vehicleLog)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, VehicleLog $vehicleLog)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(VehicleLog $vehicleLog)
     {
-        //
+        $vehicleLog->delete();
+        return back()->with('success', 'Log deleted.');
     }
 }

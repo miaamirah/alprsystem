@@ -38,8 +38,8 @@
         <div class="form-group">
             <label for="flagged">Flag Vehicle?</label>
             <select name="flagged" id="flagged" class="form-control">
-                <option value="1" {{ $plate->flagged ? 'selected' : '' }}>YES</option>
-                <option value="0" {{ !$plate->flagged ? 'selected' : '' }}>NO</option>
+                <option value="1" {{ $plate->flagged ? 'selected' : '' }}>Yes</option>
+                <option value="0" {{ !$plate->flagged ? 'selected' : '' }}>No</option>
             </select>
         </div>
 

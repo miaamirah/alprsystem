@@ -35,6 +35,14 @@
                 </a>
             </li>
 
+            <!-- Nav Item - Vehicle Log -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('vehicle-logs.index') }}">
+                    <i class="fas fa-fw fa-car"></i>
+                    <span>Vehicle Log Changes</span>
+                </a>
+            </li>
+
 
 
             <!-- Nav Item - Utilities Collapse Menu -->
