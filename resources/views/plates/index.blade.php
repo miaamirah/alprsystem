@@ -23,11 +23,10 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <div class="table-responsive">
+    <div class="table-responsive shadow p-3 mb-5 bg-white rounded">
         <!--table class="table table-bordered table-striped text-center"-->
         <table class="table table-bordered text-center" style="width: 98%; font-size: 14px; white-space: nowrap;">
-            <thead style="background-color:rgb(3, 62, 129);
-             color: white; text-align: center;">
+            <thead style="background-color:rgb(3, 62, 129);color: white; text-align: center;">
                 <tr style="height: 60px;">
                     <th style="vertical-align: middle;">Entry time</th>
                     <th style="vertical-align: middle;">Exit time</th>

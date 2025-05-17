@@ -10,7 +10,7 @@ class VehicleLogController extends Controller
 {
     public function index()
     {
-        $logs = VehicleLog::with('plate')->orderBy('created_at', 'desc')->get();
+        $logs = VehicleLog::with(['plate', 'user'])->orderBy('created_at', 'desc')->get();
     return view('vehicle_logs.index', compact('logs'));
     }
 

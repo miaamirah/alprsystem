@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Plate;
 use App\Models\VehicleLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class PlateController extends Controller
 {
@@ -58,7 +60,7 @@ class PlateController extends Controller
                 'plate_id' => $plate->id,
                 'action' => 'updated',
                 'message' => "Flag: $oldFlag → {$request->flagged}, Reason: '{$oldReason}' → '{$request->reason}'",
-                'user_id' => auth()->id(), // Optional: enable if tracking user who made the change
+                'user_id' => Auth::id(), // To track user who made the change
             ]);
         }
 

@@ -13,6 +13,7 @@ class VehicleLog extends Model
         'plate_id',
         'action',
         'message',
+        'user_id'
     ];
 
     // Relationship: belongs to a vehicle plate

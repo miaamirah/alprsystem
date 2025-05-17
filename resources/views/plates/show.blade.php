@@ -27,6 +27,12 @@
                     <th>Reason</th>
                     <td>{{ $plate->reason ?? '-' }}</td>
                 </tr>
+                 @if ($plate->logs->last())
+                <tr>
+                    <th>Last Edited By</th>
+                    <td>{{ $plate->logs->last()->user->name ?? 'Unknown' }}</td>
+                </tr>
+                @endif
             </table>
 
             <a href="{{ route('plates.index') }}" class="btn btn-secondary mt-3">Back</a>
