@@ -3,12 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PlateController;
 use App\Http\Controllers\VehicleLogController;
+use App\Http\Controllers\DashboardController;
+
 Route::get('/', function () {
     return view('auth.login');
-});
-
-Route::get('/index', function () {
-    return view('index');
 });
 
 Route::get('/charts', function () {
@@ -21,6 +19,7 @@ Route::get('/loginpage', function () {
 
 Route::resource('plates', PlateController::class);
 Route::resource('vehicle-logs', VehicleLogController::class);
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 Auth::routes();
 

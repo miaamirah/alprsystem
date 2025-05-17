@@ -21,6 +21,22 @@
     <!-- Custom styles for this template-->
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
 
+    <style>
+        html, body {
+            height: 100%;
+        }
+
+        #content-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #content {
+            flex: 1;
+        }
+    </style>
+
 </head>
 
 <body id="page-top">
@@ -43,7 +59,7 @@
                 @yield('content')
                 </div>
             </div>
-    @include('includes.footer')
+            @include('includes.footer')
         </div>
         <!-- End of Content Wrapper -->
 
@@ -91,7 +107,9 @@
     <!-- Page level custom scripts -->
     <script src="{{ asset('js/demo/chart-area-demo.js') }}"></script>
     <script src="{{ asset('js/demo/chart-pie-demo.js') }}"></script>
-
+        
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@stack('scripts')
 </body>
 
 </html>
