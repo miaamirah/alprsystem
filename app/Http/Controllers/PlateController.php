@@ -21,6 +21,15 @@ class PlateController extends Controller
             $plates->where('plate_text', 'like', '%' . $request->search . '%');
         }
 
+         // Handle flag filter
+        if ($request->has('flag')) {
+            if ($request->flag === 'yes') {
+                $plates->where('flagged', 1);
+            } elseif ($request->flag === 'no') {
+                $plates->where('flagged', 0);
+            }
+        }
+
         $plates = $plates->orderBy('entry_time', 'desc')->get();
 
         return view('plates.index', compact('plates'));

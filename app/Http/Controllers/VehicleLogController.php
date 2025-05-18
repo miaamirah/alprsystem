@@ -34,7 +34,7 @@ class VehicleLogController extends Controller
             'message' => $request->message,
         ]);
 
-        return redirect()->route('vehicle-logs.index')->with('success', 'Log created.');
+        return redirect()->route('vehicle_logs.index')->with('success', 'Log created.');
     }
 
     public function destroy(VehicleLog $vehicleLog)
@@ -42,4 +42,10 @@ class VehicleLogController extends Controller
         $vehicleLog->delete();
         return back()->with('success', 'Log deleted.');
     }
+    public function show($id)
+    {
+        $log = VehicleLog::with(['plate', 'user'])->findOrFail($id);
+        return view('vehicle_logs.show', compact('log'));
+    }
+
 }

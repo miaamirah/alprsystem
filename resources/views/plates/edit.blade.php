@@ -2,6 +2,14 @@
 
 @section('content')
 <div class="container-fluid">
+    <!-- Breadcrumbs  -->
+        <nav aria-label="breadcrumb" class="mb-2">
+            <ol class="breadcrumb small">
+                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('plates.index') }}">Vehicle Log</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Edit</li>
+            </ol>
+        </nav>
     <h4 class="mb-4 font-weight-bold">Edit Plate: {{ $plate->plate_text }}</h4>
 
     {{-- Show validation errors if any --}}

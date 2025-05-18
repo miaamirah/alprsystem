@@ -1,5 +1,5 @@
            <!-- Footer -->
-           <footer class="sticky-footer bg-white">
+                <footer class="bg-white text-center py-3 mt-auto">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
                         <span>Copyright &copy; Your Website 2021</span>

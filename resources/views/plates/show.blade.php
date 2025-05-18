@@ -2,6 +2,14 @@
 
 @section('content')
 <div class="container-fluid">
+    <!-- Breadcrumbs  -->
+        <nav aria-label="breadcrumb" class="mb-2">
+            <ol class="breadcrumb small">
+                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('plates.index') }}">Vehicle Log</a></li>
+                <li class="breadcrumb-item active" aria-current="page">View</li>
+            </ol>
+        </nav>
     <h4 class="mb-4 font-weight-bold text-dark">Plate Details</h4>
 
     <div class="card shadow mb-4">

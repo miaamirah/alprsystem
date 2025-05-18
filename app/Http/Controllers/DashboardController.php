@@ -5,44 +5,59 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Plate;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $totalCount = Plate::count();
-        $flaggedCount = Plate::where('flagged', true)->count();
+        // Total vehicles this week
+        $weekStart = Carbon::now()->startOfWeek();
+        $weekEnd = Carbon::now()->endOfWeek();
 
-          // Count vehicles grouped by hour from entry_time
-            $vehicleCounts = Plate::select(DB::raw("HOUR(entry_time) as hour"), DB::raw("COUNT(*) as count"))
-                ->whereNotNull('entry_time')
-                ->groupBy('hour')
-                ->orderBy('hour')
-                ->pluck('count', 'hour');
+        $weekCount = Plate::whereBetween('entry_time', [$weekStart, $weekEnd])->count();
 
-            // Build full range of hours and fill missing ones with 0
-            $allHours = collect(range(0, 23)); // 0 to 23
-            $labels = $allHours->map(fn($h) => str_pad($h, 2, '0', STR_PAD_LEFT) . ":00");
-            $data = $allHours->map(fn($h) => $vehicleCounts->get($h, 0));
+        // Total vehicles recorded today
+        $totalCount = Plate::whereDate('entry_time', Carbon::today())->count();
 
-            $barChartData = [
-                'labels' => $labels,
-                'datasets' => [
-                    [
-                        'label' => 'Number of Vehicles',
-                        'data' => $data,
-                        'backgroundColor' => 'rgba(54, 162, 235, 0.7)'
-                    ]
-                ]
-            ];
-        // Group vehicle entries by hour (rounded to nearest hour/minute)
-        $hourlyCounts = Plate::select(DB::raw("DATE_FORMAT(entry_time, '%h:%i%p') as hour"))
+        // Total flagged vehicles today
+        $flaggedCount = Plate::whereDate('entry_time', Carbon::today())
+                            ->where('flagged', true)
+                            ->count();
+
+        // Hourly for pie chart
+        $hourlyCounts = Plate::whereDate('entry_time', Carbon::today())
+            ->select(DB::raw("DATE_FORMAT(entry_time, '%h:00%p') as hour"))
             ->groupBy('hour')
             ->orderBy('hour')
             ->selectRaw('count(*) as count')
             ->pluck('count', 'hour');
 
-        return view('dashboard', compact('totalCount', 'flaggedCount', 'hourlyCounts','barChartData'));
+        // Hourly for bar/area chart
+        $vehicleCounts = Plate::whereDate('entry_time', Carbon::today())
+            ->select(DB::raw("HOUR(entry_time) as hour"), DB::raw("COUNT(*) as count"))
+            ->groupBy('hour')
+            ->orderBy('hour')
+            ->pluck('count', 'hour');
+
+        $allHours = collect(range(0, 23));
+        $labels = $allHours->map(fn($h) => str_pad($h, 2, '0', STR_PAD_LEFT) . ":00");
+        $data = $allHours->map(fn($h) => $vehicleCounts->get($h, 0));
+
+        $barChartData = [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Number of Vehicles',
+                    'data' => $data,
+                    'backgroundColor' => 'rgb(254, 163, 176)',
+                ]
+            ]
+        ];
+
+        return view('dashboard', compact('totalCount', 'flaggedCount', 'weekCount', 'hourlyCounts', 'barChartData'));
     }
+
+
 
 }
