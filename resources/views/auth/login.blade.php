@@ -30,7 +30,7 @@
                             <div class="col-6 d-flex align-items-center justify-content-center" style="background-color: white;">
                                 <div class="p-5 w-100">
                                     <div class="text-center mb-4">
-                                        <b><h1 class="h4 text-gray-900">Welcome to PlateTrack!</b> </h1>
+                                        <b><h1 class="h4 text-gray-900">Welcome to PlateTrack!</h1></b>
                                     </div>
 
                                     <!-- Connected to Laravel Auth -->
@@ -55,6 +55,13 @@
                                         <button type="submit" class="btn btn-primary btn-user btn-block">
                                             Login
                                         </button>
+
+                                        <!-- Register Button -->
+                                        <div class="text-center mt-3">
+                                            <a href="{{ route('register') }}" class="btn btn-link">
+                                                Don't have an account? Register
+                                            </a>
+                                        </div>
 
                                         <div class="text-center mt-3">
                                             <a class="small" href="{{ route('password.request') }}">Forgot Password?</a>
