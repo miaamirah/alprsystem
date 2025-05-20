@@ -13,7 +13,17 @@ return new class extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->unsignedBigInteger('generated_by')->nullable; // admin user id
+            $table->integer('total_vehicles_range')->default(0);
+            $table->integer('total_vehicles_today')->default(0);
+            $table->integer('flagged_vehicles_range')->default(0);
+            $table->integer('flagged_vehicles_today')->default(0);
+            $table->timestamp('timestamp_created')->useCurrent();
             $table->timestamps();
+
+            $table->foreign('generated_by')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
