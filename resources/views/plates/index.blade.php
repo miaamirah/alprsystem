@@ -37,6 +37,13 @@
                     <option value="yes" {{ request('flag') == 'yes' ? 'selected' : '' }}>Flagged</option>
                     <option value="no" {{ request('flag') == 'no' ? 'selected' : '' }}>Not Flagged</option>
                 </select>
+                 <select name="period" class="form-select border-0 shadow-sm ms-2" style="background-color:rgb(255, 255, 255); color:rgb(97, 107, 118);">>
+                    <option value="">All Time</option>
+                    <option value="yesterday" {{ request('period') == 'yesterday' ? 'selected' : '' }}>Yesterday</option>
+                    <option value="7days" {{ request('period') == '7days' ? 'selected' : '' }}>Last Week</option>
+                    <option value="month" {{ request('period') == 'month' ? 'selected' : '' }}>This Month</option>
+                    <option value="year" {{ request('period') == 'year' ? 'selected' : '' }}>This Year</option>
+                </select>
                 <button class="btn btn-primary" type="submit"
                     style="background-color: rgb(3, 62, 129); border-top-right-radius: 0.375rem; border-bottom-right-radius: 0.375rem;">
                     Apply
@@ -80,14 +87,20 @@
                         <td>{{ $plate->flagged ? 'Yes' : 'No' }}</td>
                         <td>{{ $plate->reason ?? '-' }}</td>
                         <td>
-                            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                          
+                            <div class="d-flex justify-content-center" style="gap:0.1rem;">
                                 <a href="{{ route('plates.show', $plate->id) }}" class="btn btn-info btn-sm">View</a>
                                 <a href="{{ route('plates.edit', $plate->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                <form action="{{ route('plates.destroy', $plate->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this log?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-danger btn-sm">Delete</button>
-                                </form>
+                                @php
+                                    $user = Auth::user();
+                                @endphp
+                                @if($user->role === 'admin')
+                                    <form action="{{ route('plates.destroy', $plate->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this log?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                @endif
                             </div>
                         </td>
                     </tr>

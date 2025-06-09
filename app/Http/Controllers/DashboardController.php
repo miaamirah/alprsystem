@@ -54,7 +54,7 @@ class DashboardController extends Controller
                 ]
             ]
         ];
-
+    
         return view('dashboard', compact('totalCount', 'flaggedCount', 'weekCount', 'hourlyCounts', 'barChartData'));
     }
 

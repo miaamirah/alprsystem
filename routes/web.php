@@ -6,23 +6,36 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\VehicleLogController;
 use App\Http\Controllers\DashboardController;
 
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
+
+// Login page (public)
 Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::get('/charts', function () {
-    return view('charts');
-});
-
-Route::get('/loginpage', function () {
-    return view('loginpage');
-});
-
-Route::resource('plates', PlateController::class);
-Route::resource('vehicle-logs', VehicleLogController::class);
-Route::resource('reports', ReportController::class);
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
+// Laravel's auth routes (login, register, forgot password, etc)
 Auth::routes();
+Route::get('/auth-check', function () {
+    dd(Auth::check(), Auth::user());
+});
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// All protected routes (require login)
+Route::middleware(['auth'])->group(function () {
+
+    // Home page after login (shows welcome.blade.php)
+    Route::get('/home', function () {
+        return view('home');
+    })->name('home');
+
+    // Other protected routes
+    Route::resource('plates', PlateController::class);
+    Route::resource('vehicle-logs', VehicleLogController::class);
+    Route::resource('reports', ReportController::class);
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Add more routes here if needed
+});

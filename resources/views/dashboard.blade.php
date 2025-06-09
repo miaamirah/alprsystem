@@ -54,8 +54,8 @@
                 </div>
             </div>
         </div>
-    </div>
-
+    
+</div>
 <!-- Row: Pie & Bar Charts -->
 <div class="row mb-4">
     <!-- Pie Chart -->

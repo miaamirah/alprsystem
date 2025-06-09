@@ -53,53 +53,70 @@ class ReportController extends Controller
     }
 
     public function show(Report $report)
-    {
-        $start = Carbon::parse($report->start_date)->startOfDay();
-        $end = Carbon::parse($report->end_date)->endOfDay();
+{
+    $start = \Carbon\Carbon::parse($report->start_date)->startOfDay();
+    $end = \Carbon\Carbon::parse($report->end_date)->endOfDay();
 
-        $logCount = VehicleLog::whereBetween('created_at', [$start, $end])->count();
+    $logCount = \App\Models\VehicleLog::whereBetween('created_at', [$start, $end])->count();
 
-        // Group by raw SQL HOUR function to avoid duplicate bars
-        $vehicleCounts = Plate::whereBetween('entry_time', [$start, $end])
-            ->select(DB::raw("HOUR(entry_time) as hour"), DB::raw("COUNT(*) as count"))
-            ->groupBy(DB::raw("HOUR(entry_time)"))
-            ->orderBy(DB::raw("HOUR(entry_time)"))
-            ->pluck('count', 'hour');
+    // Entries per hour
+    $entries = \App\Models\Plate::whereBetween('entry_time', [$start, $end])
+        ->select(DB::raw("HOUR(entry_time) as hour"), DB::raw("COUNT(*) as count"))
+        ->groupBy(DB::raw("HOUR(entry_time)"))
+        ->orderBy(DB::raw("HOUR(entry_time)"))
+        ->pluck('count', 'hour');
 
-        $allHours = collect(range(0, 23));
-        $labels = $allHours->map(fn($h) => str_pad($h, 2, '0', STR_PAD_LEFT) . ":00");
-        $data = $allHours->map(fn($h) => $vehicleCounts->get($h, 0));
+    // Exits per hour
+    $exits = \App\Models\Plate::whereBetween('exit_time', [$start, $end])
+        ->whereNotNull('exit_time')
+        ->select(DB::raw("HOUR(exit_time) as hour"), DB::raw("COUNT(*) as count"))
+        ->groupBy(DB::raw("HOUR(exit_time)"))
+        ->orderBy(DB::raw("HOUR(exit_time)"))
+        ->pluck('count', 'hour');
 
-        $barChartData = [
-            'labels' => $labels,
-            'datasets' => [[
-                'label' => 'Number of Vehicles',
-                'data' => $data,
-                'backgroundColor' => '#A3C4F3',
-            ]]
-        ];
+    $allHours = collect(range(0, 23));
+    $labels = $allHours->map(fn($h) => str_pad($h, 2, '0', STR_PAD_LEFT) . ":00");
+    $entriesData = $allHours->map(fn($h) => $entries->get($h, 0));
+    $exitsData = $allHours->map(fn($h) => $exits->get($h, 0));
 
-        // Pie chart for flagged vs non-flagged vehicles
-        $totalCars = Plate::whereBetween('entry_time', [$start, $end])->count();
-        $flaggedCars = Plate::whereBetween('entry_time', [$start, $end])->where('flagged', true)->count();
-        $nonFlaggedCars = $totalCars - $flaggedCars;
+    $barChartData = [
+        'labels' => $labels,
+        'datasets' => [
+            [
+                'label' => 'Entries',
+                'data' => $entriesData,
+                'backgroundColor' => '#3FA7D6', // Blue
+            ],
+            [
+                'label' => 'Exits',
+                'data' => $exitsData,
+                'backgroundColor' => '#FF8C42', // Orange
+            ]
+        ]
+    ];
 
-        $pieChartData = [
-            'labels' => ['Non-Flagged Vehicles', 'Flagged Vehicles'],
-            'data' => [$nonFlaggedCars, $flaggedCars],
-            'colors' => ['#4CAF50', '#F44336']
-        ];
+    // Pie chart for flagged vs non-flagged vehicles
+    $totalCars = \App\Models\Plate::whereBetween('entry_time', [$start, $end])->count();
+    $flaggedCars = \App\Models\Plate::whereBetween('entry_time', [$start, $end])->where('flagged', true)->count();
+    $nonFlaggedCars = $totalCars - $flaggedCars;
 
-        $areaChartData = $barChartData;
+    $pieChartData = [
+        'labels' => ['Non-Flagged Vehicles', 'Flagged Vehicles'],
+        'data' => [$nonFlaggedCars, $flaggedCars],
+        'colors' => ['#4CAF50', '#F44336']
+    ];
 
-        return view('reports.show', compact(
-            'report',
-            'logCount',
-            'barChartData',
-            'pieChartData',
-            'areaChartData'
-        ));
-    }
+    $areaChartData = $barChartData; // You can change this if you want different data
+
+    return view('reports.show', compact(
+        'report',
+        'logCount',
+        'barChartData',
+        'pieChartData',
+        'areaChartData'
+    ));
+}
+
     public function destroy($id)
     {
         $report = Report::findOrFail($id);

@@ -7,26 +7,40 @@ use App\Models\VehicleLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-
 class PlateController extends Controller
 {
     /**
-     * Display a list of plates (with search).
+     * Display a list of plates (with search, flag, and period filters).
      */
     public function index(Request $request)
     {
         $plates = Plate::query();
 
+        // Search filter
         if ($request->has('search')) {
             $plates->where('plate_text', 'like', '%' . $request->search . '%');
         }
 
-         // Handle flag filter
+        // Flag filter
         if ($request->has('flag')) {
             if ($request->flag === 'yes') {
                 $plates->where('flagged', 1);
             } elseif ($request->flag === 'no') {
                 $plates->where('flagged', 0);
+            }
+        }
+
+        // Period filter (applies regardless of flag)
+        if ($request->has('period') && $request->period) {
+            if ($request->period === 'yesterday') {
+                $plates->whereDate('entry_time', now()->subDay()->toDateString());
+            } elseif ($request->period === '7days') {
+                $plates->where('entry_time', '>=', now()->subDays(7)->startOfDay());
+            } elseif ($request->period === 'month') {
+                $plates->whereMonth('entry_time', now()->month)
+                    ->whereYear('entry_time', now()->year);
+            } elseif ($request->period === 'year') {
+                $plates->whereYear('entry_time', now()->year);
             }
         }
 
@@ -76,7 +90,9 @@ class PlateController extends Controller
         return redirect()->route('plates.index')->with('success', 'Plate updated and logged.');
     }
 
-
+    /**
+     * Show a single plate record.
+     */
     public function show(Plate $plate)
     {
         return view('plates.show', compact('plate'));

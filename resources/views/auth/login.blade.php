@@ -56,12 +56,12 @@
                                             Login
                                         </button>
 
-                                        <!-- Register Button -->
+                                        <!-- Register Button >
                                         <div class="text-center mt-3">
                                             <a href="{{ route('register') }}" class="btn btn-link">
                                                 Don't have an account? Register
                                             </a>
-                                        </div>
+                                        </div-->
 
                                         <div class="text-center mt-3">
                                             <a class="small" href="{{ route('password.request') }}">Forgot Password?</a>

@@ -9,10 +9,9 @@
         <div class="sidebar-brand-text mx-3">PlateTrack</div>
     </a>
 
-    <!-- Divider -->
     <hr class="sidebar-divider my-0">
 
-    <!-- Nav Item - Dashboard -->
+    <!-- Nav Item - Dashboard (visible to all roles) -->
     <li class="nav-item active">
         <a class="nav-link" href="{{ route('dashboard') }}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
@@ -20,7 +19,7 @@
         </a>
     </li>
 
-    <!-- Nav Item - Vehicle Log -->
+    <!-- Nav Item - Vehicle Log (visible to all roles) -->
     <li class="nav-item">
         <a class="nav-link" href="{{ route('plates.index') }}">
             <i class="fas fa-fw fa-car"></i>
@@ -28,6 +27,8 @@
         </a>
     </li>
 
+    <!-- Admin only items -->
+    @can('is-admin')
     <!-- Nav Item - Vehicle Action Log -->
     <li class="nav-item">
         <a class="nav-link" href="{{ route('vehicle-logs.index') }}">
@@ -39,15 +40,14 @@
     <!-- Nav Item - Reports -->
     <li class="nav-item">
         <a class="nav-link" href="{{ route('reports.index') }}">
-            <i class="fas fa-fw fa-car"></i>
+            <i class="fas fa-fw fa-file-alt"></i>
             <span>Reports</span>
         </a>
     </li>
+    @endcan
 
-    <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
 
-    <!-- Sidebar Toggler (Sidebar) -->
     <div class="text-center d-none d-md-inline">
         <button class="rounded-circle border-0" id="sidebarToggle"></button>
     </div>
