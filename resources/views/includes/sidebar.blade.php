@@ -44,6 +44,14 @@
             <span>Reports</span>
         </a>
     </li>
+
+    <!-- Nav Item - User -->
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('users.index') }}">
+            <i class="fas fa-fw fa-file-alt"></i>
+            <span>User Management</span>
+        </a>
+    </li>
     @endcan
 
     <hr class="sidebar-divider d-none d-md-block">

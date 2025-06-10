@@ -5,6 +5,7 @@ use App\Http\Controllers\PlateController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\VehicleLogController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,7 +36,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('plates', PlateController::class);
     Route::resource('vehicle-logs', VehicleLogController::class);
     Route::resource('reports', ReportController::class);
+    Route::resource('users', UserController::class);
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
     // Add more routes here if needed
 });
