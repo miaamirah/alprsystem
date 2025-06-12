@@ -21,13 +21,14 @@ class UserController extends Controller
         return view('users.create');
     }
 
+
     // Handle form submission and create new user
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:8',
             'role' => 'required|string',
         ]);
 
@@ -40,6 +41,7 @@ class UserController extends Controller
 
         return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
+  
 
     // Show a single user's details
     public function show(User $user)
@@ -54,28 +56,45 @@ class UserController extends Controller
     }
 
     // Handle the update
-    public function update(Request $request, User $user)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|unique:users,email,' . $user->id,
-            'role' => 'required|string',
-        ]);
+   public function update(Request $request, User $user)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|unique:users,email,' . $user->id,
+        'role' => 'required|string',
+    ]);
 
+    // Track original values
+    $hasChanges = false;
+
+    if ($user->name !== $request->name) {
         $user->name = $request->name;
+        $hasChanges = true;
+    }
+
+    if ($user->email !== $request->email) {
         $user->email = $request->email;
+        $hasChanges = true;
+    }
+
+    if ($user->role !== $request->role) {
         $user->role = $request->role;
+        $hasChanges = true;
+    }
 
-        // Only update password if filled
-        if ($request->filled('password')) {
-            $request->validate(['password' => 'confirmed|min:6']);
-            $user->password = Hash::make($request->password);
-        }
+    // If password filled, update it too
+    if ($request->filled('password')) {
+        $user->password = Hash::make($request->password);
+        $hasChanges = true;
+    }
 
+    if ($hasChanges) {
         $user->save();
-
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
+
+    return redirect()->route('users.index')->with('info', 'No changes were made.');
+}
 
     // Delete the user
     public function destroy(User $user)

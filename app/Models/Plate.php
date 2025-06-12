@@ -23,4 +23,9 @@ class Plate extends Model
     {
         return $this->hasMany(VehicleLog::class,'plate_id');
     }
+
+    public function registeredVehicle()
+    {
+        return $this->hasOne(RegisteredVehicle::class, 'plate_text', 'plate_text');
+    }
 }

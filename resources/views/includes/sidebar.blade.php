@@ -11,51 +11,63 @@
 
     <hr class="sidebar-divider my-0">
 
-    <!-- Nav Item - Dashboard (visible to all roles) -->
-    <li class="nav-item active">
+    <!-- Nav Item - Dashboard -->
+    <li class="nav-item {{ Request::is('dashboard') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('dashboard') }}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span>
         </a>
     </li>
 
-    <!-- Nav Item - Vehicle Log (visible to all roles) -->
-    <li class="nav-item">
-        <a class="nav-link" href="{{ route('plates.index') }}">
+    <!-- Vehicle Log with Dropdown -->
+    @php
+        $isVehicleLog = Request::is('plates*') || Request::is('vehicle-logs*');
+    @endphp
+    <li class="nav-item {{ $isVehicleLog ? 'active' : '' }}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseVehicleLog"
+           aria-expanded="{{ $isVehicleLog ? 'true' : 'false' }}" aria-controls="collapseVehicleLog">
             <i class="fas fa-fw fa-car"></i>
             <span>Vehicle Log</span>
         </a>
+        <div id="collapseVehicleLog" class="collapse {{ $isVehicleLog ? 'show' : '' }}" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item {{ Request::is('plates*') ? 'active' : '' }}" href="{{ route('plates.index') }}">Vehicle Plate Log</a>
+                @can('is-admin')
+                <a class="collapse-item {{ Request::is('vehicle-logs*') ? 'active' : '' }}" href="{{ route('vehicle-logs.index') }}">Vehicle Plate Action Log</a>
+                @endcan
+            </div>
+        </div>
     </li>
 
-    <!-- Admin only items -->
     @can('is-admin')
-    <!-- Nav Item - Vehicle Action Log -->
-    <li class="nav-item">
-        <a class="nav-link" href="{{ route('vehicle-logs.index') }}">
-            <i class="fas fa-fw fa-car"></i>
-            <span>Vehicle Action Log</span>
-        </a>
-    </li>
-
-    <!-- Nav Item - Reports -->
-    <li class="nav-item">
-        <a class="nav-link" href="{{ route('reports.index') }}">
-            <i class="fas fa-fw fa-file-alt"></i>
-            <span>Reports</span>
-        </a>
-    </li>
-
-    <!-- Nav Item - User -->
-    <li class="nav-item">
+    <!-- User Management -->
+    <li class="nav-item {{ Request::is('users*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('users.index') }}">
             <i class="fas fa-fw fa-file-alt"></i>
             <span>User Management</span>
+        </a>
+    </li>
+
+    <!-- Registered Vehicles -->
+    <li class="nav-item {{ Request::is('registered_vehicles*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('registered_vehicles.index') }}">
+            <i class="fas fa-fw fa-file-alt"></i>
+            <span>Registered Vehicle</span>
+        </a>
+    </li>
+
+    <!-- Reports -->
+    <li class="nav-item {{ Request::is('reports*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('reports.index') }}">
+            <i class="fas fa-fw fa-file-alt"></i>
+            <span>Reports</span>
         </a>
     </li>
     @endcan
 
     <hr class="sidebar-divider d-none d-md-block">
 
+    <!-- Sidebar Toggle Button -->
     <div class="text-center d-none d-md-inline">
         <button class="rounded-circle border-0" id="sidebarToggle"></button>
     </div>
