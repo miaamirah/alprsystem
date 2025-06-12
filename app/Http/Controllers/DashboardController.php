@@ -11,30 +11,36 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        $today = Carbon::today();
+
         // Total vehicles this week
         $weekStart = Carbon::now()->startOfWeek();
         $weekEnd = Carbon::now()->endOfWeek();
-
         $weekCount = Plate::whereBetween('entry_time', [$weekStart, $weekEnd])->count();
 
-        // Total vehicles recorded today
-        $totalCount = Plate::whereDate('entry_time', Carbon::today())->count();
+        // Total vehicles entered today
+        $totalCount = Plate::whereDate('entry_time', $today)->count();
+
+        // Vehicles exited today
+        $vehiclesOut = Plate::whereDate('exit_time', $today)->count();
+
+        // Currently in campus: any vehicle with no exit_time (regardless of entry date)
+        $currentInCampus = Plate::whereNull('exit_time')->count();
 
         // Total flagged vehicles today
-        $flaggedCount = Plate::whereDate('entry_time', Carbon::today())
+        $flaggedCount = Plate::whereDate('entry_time', $today)
                             ->where('flagged', true)
                             ->count();
 
-        // Hourly for pie chart
-        $hourlyCounts = Plate::whereDate('entry_time', Carbon::today())
+        // Pie and bar/area chart data (as before)
+        $hourlyCounts = Plate::whereDate('entry_time', $today)
             ->select(DB::raw("DATE_FORMAT(entry_time, '%h:00%p') as hour"))
             ->groupBy('hour')
             ->orderBy('hour')
             ->selectRaw('count(*) as count')
             ->pluck('count', 'hour');
 
-        // Hourly for bar/area chart
-        $vehicleCounts = Plate::whereDate('entry_time', Carbon::today())
+        $vehicleCounts = Plate::whereDate('entry_time', $today)
             ->select(DB::raw("HOUR(entry_time) as hour"), DB::raw("COUNT(*) as count"))
             ->groupBy('hour')
             ->orderBy('hour')
@@ -54,10 +60,15 @@ class DashboardController extends Controller
                 ]
             ]
         ];
-    
-        return view('dashboard', compact('totalCount', 'flaggedCount', 'weekCount', 'hourlyCounts', 'barChartData'));
+
+        return view('dashboard', compact(
+            'totalCount',
+            'flaggedCount',
+            'weekCount',
+            'hourlyCounts',
+            'barChartData',
+            'currentInCampus',
+            'vehiclesOut'
+        ));
     }
-
-
-
 }

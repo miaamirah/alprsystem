@@ -14,7 +14,7 @@ class ReportController extends Controller
 {
     public function index()
     {
-         $reports = Report::orderBy('id', 'asc')->get();
+         $reports = Report::with('user')->orderBy('id', 'asc')->get();
         return view('reports.index', compact('reports'));
     }
 
@@ -42,7 +42,7 @@ class ReportController extends Controller
         $report = Report::create([
             'start_date' => $start,
             'end_date' => $end,
-            'generated_by' => 1,
+            'generated_by' => Auth::id(),
             'total_vehicles_range' => $totalRange,
             'flagged_vehicles_range' => $flaggedRange,
             'total_vehicles_today' => $totalToday,
@@ -57,6 +57,7 @@ class ReportController extends Controller
     $start = \Carbon\Carbon::parse($report->start_date)->startOfDay();
     $end = \Carbon\Carbon::parse($report->end_date)->endOfDay();
 
+    // Count log changes
     $logCount = \App\Models\VehicleLog::whereBetween('created_at', [$start, $end])->count();
 
     // Entries per hour
@@ -106,14 +107,34 @@ class ReportController extends Controller
         'colors' => ['#4CAF50', '#F44336']
     ];
 
-    $areaChartData = $barChartData; // You can change this if you want different data
+    $areaChartData = $barChartData;
+
+    // Extra statistics for cards
+    $vehiclesEntered = $totalCars;
+    $vehiclesExited = \App\Models\Plate::whereBetween('exit_time', [$start, $end])
+        ->whereNotNull('exit_time')->count();
+    $stillInCampus = \App\Models\Plate::whereBetween('entry_time', [$start, $end])
+        ->whereNull('exit_time')->count();
+
+    // Peak hour
+    $peakHour = null; $peakHourCount = null;
+    if ($entries->max() > 0) {
+        $peakHourRaw = $entries->filter(fn($v) => $v == $entries->max())->keys()->first();
+        $peakHour = str_pad($peakHourRaw, 2, '0', STR_PAD_LEFT) . ":00";
+        $peakHourCount = $entries->max();
+    }
 
     return view('reports.show', compact(
         'report',
         'logCount',
         'barChartData',
         'pieChartData',
-        'areaChartData'
+        'areaChartData',
+        'vehiclesEntered',
+        'vehiclesExited',
+        'stillInCampus',
+        'peakHour',
+        'peakHourCount'
     ));
 }
 
