@@ -52,6 +52,18 @@
                     </tr>
                     <tr>
                         <th class="bg-light text-dark" style="font-weight:600; border:1px solid #b0bec5;">
+                            <i class="fas fa-user-check text-success me-2" style="margin-right: 10px;"></i> Registered
+                        </th>
+                        <td style="color:#212529; border:1px solid #b0bec5;">
+                            @if ($plate->registeredVehicle)
+                                <i class="fas fa-check-circle text-success"></i>
+                            @else
+                                <i class="fas fa-times-circle text-danger"></i>
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="bg-light text-dark" style="font-weight:600; border:1px solid #b0bec5;">
                             <i class="fas fa-comment-alt text-info me-2" style="margin-right: 10px;"></i> Reason
                         </th>
                         <td style="color:#212529; border:1px solid #b0bec5;">{{ $plate->reason ?? '-' }}</td>
@@ -64,6 +76,8 @@
                         <td style="color:#212529; border:1px solid #b0bec5;">{{ $plate->logs->last()->user->name ?? 'Unknown' }}</td>
                     </tr>
                     @endif
+                    
+
                 </table>
 
                 <div class="text-start mt-4">

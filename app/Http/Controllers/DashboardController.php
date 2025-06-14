@@ -71,4 +71,5 @@ class DashboardController extends Controller
             'vehiclesOut'
         ));
     }
+    
 }

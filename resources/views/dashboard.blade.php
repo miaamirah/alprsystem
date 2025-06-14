@@ -3,23 +3,7 @@
 
 <div class="container-fluid">
     <div class="row g-3 mb-4 justify-content-center">
-
-
-        <!-- Total Vehicles This Week -->
-        <div class="col-12 col-sm-6 col-lg-4 col-xl-2">
-           <div class="card dashboard-card h-100">
-                <div class="card-body text-center">
-                    <span class="icon-outline text-info mb-2">
-                        <i class="fas fa-calendar-week"></i>
-                    </span>
-                    <div class="mt-2 text-xs fw-bold text-info text-uppercase mb-2 stat-title">
-                       <b> Total Vehicles This Week</b>
-                    </div>
-                    <div class="fs-4 fw-bold text-dark stat-value">{{ $weekCount }}</div>
-                </div>
-            </div>
-        </div>
-
+        
         <!-- Total Vehicles Today -->
         <div class="col-12 col-sm-6 col-lg-4 col-xl-2">
             <div class="card dashboard-card h-100">
@@ -28,60 +12,57 @@
                         <i class="fas fa-sign-in-alt"></i>
                     </span>
                     <div class="mt-2 text-xs fw-bold text-primary text-uppercase mb-1 stat-title">
-                        <b>Vehicles Entered Today</b>
+                        <b>Total vehicles Entered Today</b>
                     </div>
-                    <div class="fs-4 fw-bold text-dark stat-value">{{ $totalCount }}</div>
+                    <div class="fs-4 fw-bold text-dark stat-value"><b>{{ $totalCount }}</b></div>
                 </div>
             </div>
         </div>
-
         <!-- Vehicles Exited Today -->
         <div class="col-12 col-sm-6 col-lg-4 col-xl-2">
-        <div class="card dashboard-card h-100">                
-            <div class="card-body text-center">
+            <div class="card dashboard-card h-100">
+                <div class="card-body text-center">
                     <span class="icon-outline text-warning mb-2">
                         <i class="fas fa-sign-out-alt"></i>
                     </span>
                     <div class="mt-2 text-xs fw-bold text-warning text-uppercase mb-1 stat-title">
-                        <b>Vehicles Exited Today</b>
+                        <b>Total Vehicles Exited Today</b>
                     </div>
-                    <div class="fs-4 fw-bold text-dark stat-value">{{ $vehiclesOut }}</div>
+                    <div class="fs-4 fw-bold text-dark stat-value"><b>{{ $vehiclesOut }}</b></div>
                 </div>
             </div>
         </div>
-
         <!-- Currently In Campus -->
         <div class="col-12 col-sm-6 col-lg-4 col-xl-2">
-        <div class="card dashboard-card h-100">                
-            <div class="card-body text-center">
+            <div class="card dashboard-card h-100">
+                <div class="card-body text-center">
                     <span class="icon-outline text-success mb-2">
                         <i class="fas fa-parking"></i>
                     </span>
                     <div class="mt-2 text-xs fw-bold text-success text-uppercase mb-1 stat-title">
-                        <b>Currently In Campus</b>
+                        <b>Overall Vehicles Currently In Campus</b>
                     </div>
-                    <div class="fs-4 fw-bold text-dark stat-value">{{ $currentInCampus }}</div>
+                    <div class="fs-4 fw-bold text-dark stat-value"><b>{{ $currentInCampus }}</b></div>
                 </div>
             </div>
         </div>
-
         <!-- Flagged Vehicles Today -->
         <div class="col-12 col-sm-6 col-lg-4 col-xl-2">
-        <div class="card dashboard-card h-100">                
-            <div class="card-body text-center">
+            <div class="card dashboard-card h-100">
+                <div class="card-body text-center">
                     <span class="icon-outline text-danger mb-2">
                         <i class="fas fa-flag"></i>
                     </span>
                     <div class="mt-2 text-xs fw-bold text-danger text-uppercase mb-1 stat-title">
                         <b>Flagged Vehicles Today</b>
                     </div>
-                    <div class="fs-4 fw-bold text-dark stat-value">{{ $flaggedCount }}</div>
+                    <div class="fs-4 fw-bold text-dark stat-value"><b>{{ $flaggedCount }}</b></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- CHARTS -->
+    <!-- CHARTS: Pie + Bar (side by side) -->
     <div class="row mb-4">
         <!-- Pie Chart -->
         <div class="col-md-6 mb-4">
@@ -89,50 +70,56 @@
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold" style="color:#3F1457">Total number of cars (hourly)</h6>
                 </div>
-                <div class="card-body p-3" style="height: 385px;">
-                    <canvas id="pieChart" style="height: 100% !important; width: 50% !important;"></canvas>
+                <div class="card-body p-3 d-flex align-items-center justify-content-center" style="height:400px; min-height:320px;">
+                    <canvas id="pieChart" style="height:100% !important; width:100% !important; max-height: 350px;"></canvas>
                 </div>
             </div>
         </div>
-
         <!-- Bar Chart -->
         <div class="col-md-6 mb-4">
             <div class="card shadow h-100">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold" style="color:#3F1457">Bar chart</h6>
                 </div>
-                <div class="card-body p-2">
-                    <canvas id="barChart" height="250"></canvas>
+                <div class="card-body p-3 d-flex align-items-center justify-content-center" style="height:400px; min-height:320px;">
+                    <canvas id="barChart" style="height:100% !important; width:100% !important; max-height: 350px;"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Area Chart -->
-    <div class="row">
+    <!-- Area Chart: FULL WIDTH under both charts above -->
+    <div class="row mb-4">
         <div class="col-12 mb-4">
-            <div class="card shadow h-100">
+            <div class="card shadow h-100" style="width:100%;">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold" style="color:#3F1457">Vehicle Trend (Today)</h6>
                 </div>
-                <div class="card-body" style="height: 300px;">
-                    <canvas id="areaChart" style="height: 100% !important; width: 100% !important;"></canvas>
+                <div class="card-body p-3 d-flex align-items-center justify-content-center" style="height:400px; min-height:320px; width:100%;">
+                    <canvas id="areaChart" style="height:100% !important; width:100% !important;"></canvas>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
 
-<!-- OPTIONAL: Animations for cards (requires animate.css or AOS.js if you want) -->
-<!-- Card/Icons styling -->
 <style>
+    .stat-title {
+    font-size: 14px;
+    font-weight: 400;
+    text-align: center;
+    letter-spacing: .02em;
+    line-height: 1.2;
+    min-height: 48px; /* force all titles to same height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
     .dashboard-card {
         box-shadow: 0 8px 24px rgba(8, 79, 160, 0.3);
-        /*border: 2px solid #084fa0;  /* Soft light gray border */
         border-radius: 24px;
         background: #fff;
-        /*box-shadow: 0 4px 24px rgba(8, 79, 160, 0.05); /* Soft shadow, optional */
     }
     .wow-card {
         border-radius: 18px;
@@ -149,7 +136,7 @@
         width: 44px;
         height: 44px;
         border-radius: 50%;
-        border: 2.5px solid #15c0d5; /* default, override by color class */
+        border: 2.5px solid #15c0d5;
         font-size: 1.6rem;
         margin-bottom: 5px;
     }
@@ -187,6 +174,7 @@
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: { position: 'right' },
                 title: { display: true, text: 'Vehicle Count Per Hour (Today)' }
@@ -204,6 +192,7 @@
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 y: {
                     beginAtZero: true,
@@ -216,7 +205,7 @@
         }
     });
 
-    // AREA CHART
+    // AREA CHART (FULL WIDTH)
     const areaCtx = document.getElementById('areaChart').getContext('2d');
     const areaChart = new Chart(areaCtx, {
         type: 'line',
@@ -234,6 +223,7 @@
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: { display: false }
             },
@@ -249,5 +239,4 @@
         }
     });
 </script>
-
 @endpush

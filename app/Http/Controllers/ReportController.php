@@ -14,7 +14,7 @@ class ReportController extends Controller
 {
     public function index()
     {
-         $reports = Report::with('user')->orderBy('id', 'asc')->get();
+        $reports = Report::with('user')->orderBy('id', 'asc')->get();
         return view('reports.index', compact('reports'));
     }
 
@@ -53,90 +53,125 @@ class ReportController extends Controller
     }
 
     public function show(Report $report)
-{
-    $start = \Carbon\Carbon::parse($report->start_date)->startOfDay();
-    $end = \Carbon\Carbon::parse($report->end_date)->endOfDay();
+    {
+        $start = Carbon::parse($report->start_date)->startOfDay();
+        $end = Carbon::parse($report->end_date)->endOfDay();
 
-    // Count log changes
-    $logCount = \App\Models\VehicleLog::whereBetween('created_at', [$start, $end])->count();
+        // Count log changes
+        $logCount = VehicleLog::whereBetween('created_at', [$start, $end])->count();
 
-    // Entries per hour
-    $entries = \App\Models\Plate::whereBetween('entry_time', [$start, $end])
-        ->select(DB::raw("HOUR(entry_time) as hour"), DB::raw("COUNT(*) as count"))
-        ->groupBy(DB::raw("HOUR(entry_time)"))
-        ->orderBy(DB::raw("HOUR(entry_time)"))
-        ->pluck('count', 'hour');
+        // All log changes (for table)
+        $logChanges = VehicleLog::whereBetween('created_at', [$start, $end])
+            ->with(['user', 'plate'])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-    // Exits per hour
-    $exits = \App\Models\Plate::whereBetween('exit_time', [$start, $end])
-        ->whereNotNull('exit_time')
-        ->select(DB::raw("HOUR(exit_time) as hour"), DB::raw("COUNT(*) as count"))
-        ->groupBy(DB::raw("HOUR(exit_time)"))
-        ->orderBy(DB::raw("HOUR(exit_time)"))
-        ->pluck('count', 'hour');
+        // Entries per hour
+        $entries = Plate::whereBetween('entry_time', [$start, $end])
+            ->select(DB::raw("HOUR(entry_time) as hour"), DB::raw("COUNT(*) as count"))
+            ->groupBy(DB::raw("HOUR(entry_time)"))
+            ->orderBy(DB::raw("HOUR(entry_time)"))
+            ->pluck('count', 'hour');
 
-    $allHours = collect(range(0, 23));
-    $labels = $allHours->map(fn($h) => str_pad($h, 2, '0', STR_PAD_LEFT) . ":00");
-    $entriesData = $allHours->map(fn($h) => $entries->get($h, 0));
-    $exitsData = $allHours->map(fn($h) => $exits->get($h, 0));
+        // Exits per hour
+        $exits = Plate::whereBetween('exit_time', [$start, $end])
+            ->whereNotNull('exit_time')
+            ->select(DB::raw("HOUR(exit_time) as hour"), DB::raw("COUNT(*) as count"))
+            ->groupBy(DB::raw("HOUR(exit_time)"))
+            ->orderBy(DB::raw("HOUR(exit_time)"))
+            ->pluck('count', 'hour');
 
-    $barChartData = [
-        'labels' => $labels,
-        'datasets' => [
-            [
-                'label' => 'Entries',
-                'data' => $entriesData,
-                'backgroundColor' => '#3FA7D6', // Blue
-            ],
-            [
-                'label' => 'Exits',
-                'data' => $exitsData,
-                'backgroundColor' => '#FF8C42', // Orange
+        $allHours = collect(range(0, 23));
+        $labels = $allHours->map(fn($h) => str_pad($h, 2, '0', STR_PAD_LEFT) . ":00");
+        $entriesData = $allHours->map(fn($h) => $entries->get($h, 0));
+        $exitsData = $allHours->map(fn($h) => $exits->get($h, 0));
+
+        $barChartData = [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Entries',
+                    'data' => $entriesData,
+                    'backgroundColor' => '#3FA7D6',
+                ],
+                [
+                    'label' => 'Exits',
+                    'data' => $exitsData,
+                    'backgroundColor' => '#FF8C42',
+                ]
             ]
-        ]
-    ];
+        ];
 
-    // Pie chart for flagged vs non-flagged vehicles
-    $totalCars = \App\Models\Plate::whereBetween('entry_time', [$start, $end])->count();
-    $flaggedCars = \App\Models\Plate::whereBetween('entry_time', [$start, $end])->where('flagged', true)->count();
-    $nonFlaggedCars = $totalCars - $flaggedCars;
+        // Pie chart for flagged vs non-flagged vehicles
+        $totalCars = Plate::whereBetween('entry_time', [$start, $end])->count();
+        $flaggedCars = Plate::whereBetween('entry_time', [$start, $end])->where('flagged', true)->count();
+        $nonFlaggedCars = $totalCars - $flaggedCars;
 
-    $pieChartData = [
-        'labels' => ['Non-Flagged Vehicles', 'Flagged Vehicles'],
-        'data' => [$nonFlaggedCars, $flaggedCars],
-        'colors' => ['#4CAF50', '#F44336']
-    ];
+        $pieChartData = [
+            'labels' => ['Non-Flagged Vehicles', 'Flagged Vehicles'],
+            'data' => [$nonFlaggedCars, $flaggedCars],
+            'colors' => ['#4CAF50', '#F44336']
+        ];
 
-    $areaChartData = $barChartData;
+        $areaChartData = $barChartData;
 
-    // Extra statistics for cards
-    $vehiclesEntered = $totalCars;
-    $vehiclesExited = \App\Models\Plate::whereBetween('exit_time', [$start, $end])
-        ->whereNotNull('exit_time')->count();
-    $stillInCampus = \App\Models\Plate::whereBetween('entry_time', [$start, $end])
-        ->whereNull('exit_time')->count();
+        // Extra statistics for cards
+        $vehiclesEntered = $totalCars;
+        $vehiclesExited = Plate::whereBetween('exit_time', [$start, $end])
+            ->whereNotNull('exit_time')->count();
+        $stillInCampus = Plate::whereBetween('entry_time', [$start, $end])
+            ->whereNull('exit_time')->count();
 
-    // Peak hour
-    $peakHour = null; $peakHourCount = null;
-    if ($entries->max() > 0) {
-        $peakHourRaw = $entries->filter(fn($v) => $v == $entries->max())->keys()->first();
-        $peakHour = str_pad($peakHourRaw, 2, '0', STR_PAD_LEFT) . ":00";
-        $peakHourCount = $entries->max();
+        // Peak hour
+        $peakHour = null; $peakHourCount = null;
+        if ($entries->max() > 0) {
+            $peakHourRaw = $entries->filter(fn($v) => $v == $entries->max())->keys()->first();
+            $peakHour = str_pad($peakHourRaw, 2, '0', STR_PAD_LEFT) . ":00";
+            $peakHourCount = $entries->max();
+        }
+
+        // Flagged vehicles (for table)
+        $flaggedVehicles = Plate::whereBetween('entry_time', [$start, $end])
+            ->where('flagged', true)
+            ->with('registeredVehicle')
+            ->orderBy('entry_time')
+            ->get();
+
+        // All vehicles in range
+        $vehiclesInRange = Plate::whereBetween('entry_time', [$start, $end])
+            ->with('registeredVehicle')
+            ->orderBy('entry_time')
+            ->get();
+
+        $vehiclesExitedInRange = \App\Models\Plate::whereBetween('exit_time', [$start, $end])
+            ->whereNotNull('exit_time')
+            ->orderBy('exit_time')
+            ->get();
+
+        $vehiclesStillInCampus = \App\Models\Plate::whereBetween('entry_time', [$start, $end])
+            ->whereNull('exit_time')
+            ->orderBy('entry_time')
+            ->get();
+
+
+        return view('reports.show', compact(
+            'report',
+            'logCount',
+            'logChanges',
+            'barChartData',
+            'pieChartData',
+            'areaChartData',
+            'vehiclesEntered',
+            'vehiclesExited',
+            'stillInCampus',
+            'peakHour',
+            'peakHourCount',
+            'flaggedVehicles',
+            'vehiclesInRange',
+            'vehiclesExitedInRange',
+            'vehiclesStillInCampus'
+        ));
     }
-
-    return view('reports.show', compact(
-        'report',
-        'logCount',
-        'barChartData',
-        'pieChartData',
-        'areaChartData',
-        'vehiclesEntered',
-        'vehiclesExited',
-        'stillInCampus',
-        'peakHour',
-        'peakHourCount'
-    ));
-}
 
     public function destroy($id)
     {
@@ -145,6 +180,4 @@ class ReportController extends Controller
 
         return redirect()->route('reports.index')->with('success', 'Report deleted successfully.');
     }
-
-
 }
