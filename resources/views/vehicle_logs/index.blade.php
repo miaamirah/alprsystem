@@ -1,6 +1,123 @@
 @extends('layouts.admin')
 
 @section('content')
+<style>
+    /* DataTables pill-shaped search bar with teal hover */
+    .dataTables_filter label {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .dataTables_filter input[type="search"] {
+        border-radius: 999px;
+        border: 1.5px solid #ccc;
+        padding: 0.32rem 1.1rem;
+        font-size: 1rem;
+        color: #666;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        background: #fff;
+        box-shadow: none;
+        outline: none;
+        margin-left: 0;
+        width: 100%;
+        max-width: 550px;
+        height: 2.5rem;
+    }
+
+    .dataTables_filter input[type="search"]:hover,
+    .dataTables_filter input[type="search"]:focus {
+        border-color:rgb(3, 62, 129);
+        box-shadow: 0 2px 8px rgb(3, 62, 129);
+    }
+
+    /* Make DataTables top controls appear side by side */
+    .dataTables_wrapper .dataTables_length, 
+    .dataTables_wrapper .dataTables_filter {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0;
+    }
+    .dataTables_wrapper .dataTables_length {
+        float: left !important;
+    }
+    .dataTables_wrapper .dataTables_filter {
+        float: right !important;
+        justify-content: flex-end;
+    }
+    .dataTables_wrapper .dataTables_filter input[type="search"] {
+        max-width: 350px;
+    }
+
+    /* Style DataTables Pagination */
+    .dataTables_wrapper .dataTables_paginate {
+        margin-top: 1.3rem;
+        margin-bottom: 0.7rem;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        font-size: 1rem;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        border-radius: 8px !important;
+        border: none !important;
+        background: #f5f6fa !important;
+        color: #333 !important;
+        padding: 6px 16px !important;
+        margin: 0 3px !important;
+        font-weight: 600;
+        transition: background 0.18s, color 0.18s;
+        box-shadow: none !important;
+        outline: none !important;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current:focus {
+        background: #41acbc !important;
+        color: #fff !important;
+        border: none !important;
+        font-weight: bold;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: #175ad3 !important;
+        color: #fff !important;
+    }
+    .dataTables_wrapper .dataTables_paginate .ellipsis {
+        background: none !important;
+        color: #888 !important;
+        padding: 6px 10px !important;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button:active {
+        outline: none !important;
+    }
+
+    table.dataTable thead th.sorting,
+    table.dataTable thead th.sorting_asc,
+    table.dataTable thead th.sorting_desc {
+        background-image: url('https://cdn.datatables.net/1.10.25/images/sort_both.png');
+        background-repeat: no-repeat;
+        background-position: center right 14px;
+        background-size: 18px 18px;
+        cursor: pointer;
+    }
+    table.dataTable thead th.sorting_asc {
+        background-image: url('https://cdn.datatables.net/1.10.25/images/sort_asc.png');
+    }
+    table.dataTable thead th.sorting_desc {
+        background-image: url('https://cdn.datatables.net/1.10.25/images/sort_desc.png');
+    }
+    table.dataTable thead th {
+        position: relative;
+        padding-right: 28px !important;
+    }
+    table.dataTable thead th:last-child,
+    table.dataTable thead th:last-child.sorting,
+    table.dataTable thead th:last-child.sorting_asc,
+    table.dataTable thead th:last-child.sorting_desc {
+        background-image: none !important;
+        cursor: default !important;
+    }
+</style>
+
 <div class="min-vh-100 d-flex flex-column justify-content-between">
 <div class="container-fluid">
 
@@ -13,41 +130,9 @@
     </nav>
 
     <!-- Top Bar -->
-    <div class="row align-items-center mb-4">
-        <!-- Search -->
-        <div class="col-md-4">
-            <form method="GET" action="{{ route('vehicle-logs.index') }}">
-                <div class="input-group">
-                    <input type="text" name="search" class="form-control" placeholder="Search plate number..." value="{{ request('search') }}">
-                    <button class="btn btn-primary" type="submit" style="background-color:rgb(3, 62, 129);">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Title -->
-        <div class="col-md-5 text-center">
-            <h4 class="font-weight-bold text-dark mb-0">Vehicle Plate Action Log</h4>
-        </div>
-
-        <!-- Filter -->
-        <div class="col-md-3">
-            <form method="GET" action="{{ route('vehicle-logs.index') }}" class="d-flex">
-                @if(request('search'))
-                    <input type="hidden" name="search" value="{{ request('search') }}">
-                @endif
-                <select name="period" class="form-select border-0 shadow-sm me-2" style="max-width: 150px; color: #000;">
-                    <option value="">All Time</option>
-                    <option value="yesterday" {{ request('period') == 'yesterday' ? 'selected' : '' }}>Yesterday</option>
-                    <option value="7days" {{ request('period') == '7days' ? 'selected' : '' }}>Last 7 Days</option>
-                    <option value="month" {{ request('period') == 'month' ? 'selected' : '' }}>This Month</option>
-                    <option value="year" {{ request('period') == 'year' ? 'selected' : '' }}>This Year</option>
-                </select>
-                <button class="btn btn-primary" type="submit" style="background-color: rgb(3, 62, 129);">
-                    Apply
-                </button>
-            </form>
+    <div class="row">
+        <div class="col-12">
+            <h2 class="fw-bold mb-4 text-center" style="color:rgb(3,62,129); font-family: 'Inter', 'Nunito', Arial, sans-serif; font-weight: 600;">Vehicle Plate Action Log</h2>
         </div>
     </div>
 
@@ -59,7 +144,7 @@
     <!-- Table -->
     <div class="card border-0 p-3" style="box-shadow: 0 8px 24px rgba(8, 79, 160, 0.52); border-radius: 15px; background-color: #fff;">
         <div class="table-responsive">
-            <table class="table table-bordered table-striped table-hover text-center align-middle" style="border-collapse: collapse;">
+            <table id="vehicleLogsTable" class="table table-bordered table-striped table-hover text-center align-middle" style="border-collapse: collapse;">
                 <thead class="text-white" style="background-color:rgb(3, 62, 129);">
                     <tr style="height: 60px;">
                         <th>User ID</th>
@@ -101,4 +186,31 @@
         </div>
     </div>
 </div>
+</div>
 @endsection
+
+@push('styles')
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+@endpush
+
+@push('scripts')
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#vehicleLogsTable').DataTable({
+                columnDefs: [
+                    { orderable: false, targets: -1 } // Disable sorting for Action column
+                ],
+                language: {
+                    search: "",
+                    searchPlaceholder: "Search Log"
+                }
+            });
+
+            $('.dataTables_filter input[type="search"]').css({
+                'width': '100%',
+                'max-width': '700px'
+            });
+        });
+    </script>
+@endpush

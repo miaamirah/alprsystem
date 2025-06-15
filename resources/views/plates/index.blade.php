@@ -148,47 +148,11 @@
             <li class="breadcrumb-item active" aria-current="page">Vehicle Plate Log</li>
         </ol>
     </nav>
-
-    <!-- Top Bar: Search , Title , Filter >
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
-        <-- Search (Left) >
-        <form method="GET" action="{{ route('plates.index') }}">
-            <div class="input-group" style="width: 300px;">
-                <input type="text" name="search" class="form-control" placeholder="Search plate number.." value="{{ request('search') }}">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="submit" style="background-color:rgb(3, 62, 129);">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </div>
-        </form-->
-
-        <!-- Title -->
-        <h4 class="font-weight-bold text-dark text-center mb-0 flex-grow-1">Vehicle Plate Log</h4>
-
-        <!-- Filter  >
-        <form method="GET" action="{{ route('plates.index') }}">
-            <div class="input-group" style="max-width: 320px;">
-                <select name="flag" class="form-select border-0 shadow-sm"
-                    style="background-color:rgb(255, 255, 255); color:rgb(97, 107, 118); border-top-left-radius: 0.375rem; border-bottom-left-radius: 0.375rem;">
-                    <option value="">All</option>
-                    <option value="yes" {{ request('flag') == 'yes' ? 'selected' : '' }}>Flagged</option>
-                    <option value="no" {{ request('flag') == 'no' ? 'selected' : '' }}>Not Flagged</option>
-                </select>
-                 <select name="period" class="form-select border-0 shadow-sm ms-2" style="background-color:rgb(255, 255, 255); color:rgb(97, 107, 118);">
-                    <option value="">All Time</option>
-                    <option value="yesterday" {{ request('period') == 'yesterday' ? 'selected' : '' }}>Yesterday</option>
-                    <option value="7days" {{ request('period') == '7days' ? 'selected' : '' }}>Last Week</option>
-                    <option value="month" {{ request('period') == 'month' ? 'selected' : '' }}>This Month</option>
-                    <option value="year" {{ request('period') == 'year' ? 'selected' : '' }}>This Year</option>
-                </select>
-                <button class="btn btn-primary" type="submit"
-                    style="background-color: rgb(3, 62, 129); border-top-right-radius: 0.375rem; border-bottom-right-radius: 0.375rem;">
-                    Apply
-                </button>
-            </div>
-        </form>
-    </div-->
+         <div class="row">
+        <div class="col-12">
+            <h2 class="fw-bold mb-4 text-center" style="color:rgb(3,62,129); font-family: 'Inter', 'Nunito', Arial, sans-serif; font-weight: 600;">Vehicle Plate Log</h2>
+        </div>
+    </div>
 
     <div class="card border-0 p-3"
         style="box-shadow: 0 8px 24px rgba(8, 79, 160, 0.52); border-radius: 15px; background-color: #fff;">
