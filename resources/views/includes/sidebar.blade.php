@@ -55,7 +55,7 @@
             <span>Registered Vehicle</span>
         </a>
     </li>
-
+    @endcan
     <!-- Reports -->
     <li class="nav-item {{ Request::is('reports*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('reports.index') }}">
@@ -63,7 +63,6 @@
             <span>Reports</span>
         </a>
     </li>
-    @endcan
 
     <hr class="sidebar-divider d-none d-md-block">
 
