@@ -4,7 +4,7 @@
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('dashboard') }}">
         <div class="sidebar-brand-icon rotate-n-15">
-            <i class="fas fa-laugh-wink"></i>
+            <i class="fas fa-car" style="color:rgb(255, 255, 255); font-size: 1.7rem;"></i>
         </div>
         <div class="sidebar-brand-text mx-3">PlateTrack</div>
     </a>

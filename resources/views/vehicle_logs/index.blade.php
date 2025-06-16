@@ -203,7 +203,7 @@
                 ],
                 language: {
                     search: "",
-                    searchPlaceholder: "Search Log"
+                    searchPlaceholder: "Search"
                 }
             });
 
