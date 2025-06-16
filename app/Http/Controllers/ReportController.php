@@ -14,8 +14,20 @@ class ReportController extends Controller
 {
     public function index()
     {
+        $user = auth()->user();
+
+    if ($user->role === 'admin') {
+        // Admin sees all reports
         $reports = Report::with('user')->orderBy('id', 'asc')->get();
-        return view('reports.index', compact('reports'));
+    } else {
+        // Others (e.g. security) see only their own reports
+        $reports = Report::with('user')
+            ->where('generated_by', $user->id)
+            ->orderBy('id', 'asc')
+            ->get();
+    }
+
+    return view('reports.index', compact('reports'));
     }
 
     public function create()
@@ -54,6 +66,10 @@ class ReportController extends Controller
 
     public function show(Report $report)
     {
+        // Only allow the owner to view this report
+        if ($report->generated_by !== Auth::id()) {
+            abort(403, 'Unauthorized');
+        }
         $start = Carbon::parse($report->start_date)->startOfDay();
         $end = Carbon::parse($report->end_date)->endOfDay();
 
