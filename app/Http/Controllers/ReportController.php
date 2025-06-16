@@ -66,8 +66,8 @@ class ReportController extends Controller
 
     public function show(Report $report)
     {
-        // Only allow the owner to view this report
-        if ($report->generated_by !== Auth::id()) {
+         $user = auth()->user();
+        if (auth()->user()->role === 'security' && $report->generated_by !== auth()->id()) {
             abort(403, 'Unauthorized');
         }
         $start = Carbon::parse($report->start_date)->startOfDay();
