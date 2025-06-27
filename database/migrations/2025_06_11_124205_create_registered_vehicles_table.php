@@ -12,9 +12,9 @@ return new class extends Migration {
             $table->string('owner_name');
             $table->string('student_id');
             $table->string('plate_text')->unique();
-            $table->string('vehicle_type'); // optional
-            $table->string('brand');        // optional
-            $table->string('color');        // optional
+            $table->string('vehicle_type'); 
+            $table->string('brand');        
+            $table->string('color');        
             $table->timestamps();
         });
     }

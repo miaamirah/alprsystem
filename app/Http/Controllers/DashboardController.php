@@ -32,7 +32,7 @@ class DashboardController extends Controller
                             ->where('flagged', true)
                             ->count();
 
-        // Pie and bar/area chart data (as before)
+        // Pie chart data (unchanged, still for "vehicles entered" per hour)
         $hourlyCounts = Plate::whereDate('entry_time', $today)
             ->select(DB::raw("DATE_FORMAT(entry_time, '%h:00%p') as hour"))
             ->groupBy('hour')
@@ -40,23 +40,37 @@ class DashboardController extends Controller
             ->selectRaw('count(*) as count')
             ->pluck('count', 'hour');
 
-        $vehicleCounts = Plate::whereDate('entry_time', $today)
+        // Entries and Exits for Bar/Area Charts
+        $entries = Plate::whereDate('entry_time', $today)
             ->select(DB::raw("HOUR(entry_time) as hour"), DB::raw("COUNT(*) as count"))
-            ->groupBy('hour')
-            ->orderBy('hour')
+            ->groupBy(DB::raw("HOUR(entry_time)"))
+            ->orderBy(DB::raw("HOUR(entry_time)"))
+            ->pluck('count', 'hour');
+
+        $exits = Plate::whereDate('exit_time', $today)
+            ->whereNotNull('exit_time')
+            ->select(DB::raw("HOUR(exit_time) as hour"), DB::raw("COUNT(*) as count"))
+            ->groupBy(DB::raw("HOUR(exit_time)"))
+            ->orderBy(DB::raw("HOUR(exit_time)"))
             ->pluck('count', 'hour');
 
         $allHours = collect(range(0, 23));
         $labels = $allHours->map(fn($h) => str_pad($h, 2, '0', STR_PAD_LEFT) . ":00");
-        $data = $allHours->map(fn($h) => $vehicleCounts->get($h, 0));
+        $entriesData = $allHours->map(fn($h) => $entries->get($h, 0));
+        $exitsData   = $allHours->map(fn($h) => $exits->get($h, 0));
 
         $barChartData = [
             'labels' => $labels,
             'datasets' => [
                 [
-                    'label' => 'Number of Vehicles',
-                    'data' => $data,
-                    'backgroundColor' => 'rgb(254, 163, 176)',
+                    'label' => 'Entries',
+                    'data' => $entriesData,
+                    'backgroundColor' => '#3FA7D6',
+                ],
+                [
+                    'label' => 'Exits',
+                    'data' => $exitsData,
+                    'backgroundColor' => '#FF8C42',
                 ]
             ]
         ];
@@ -71,5 +85,6 @@ class DashboardController extends Controller
             'vehiclesOut'
         ));
     }
-    
 }
+
+

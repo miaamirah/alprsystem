@@ -40,5 +40,4 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('registered_vehicles', RegisteredVehicleController::class);
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    // Add more routes here if needed
 });

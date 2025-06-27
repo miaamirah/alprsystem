@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->date('start_date');
             $table->date('end_date');
-            $table->unsignedBigInteger('generated_by')->nullable; // admin user id
+            $table->unsignedBigInteger('generated_by')->nullable; 
             $table->integer('total_vehicles_range')->default(0);
             $table->integer('total_vehicles_today')->default(0);
             $table->integer('flagged_vehicles_range')->default(0);

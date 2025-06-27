@@ -75,11 +75,11 @@
                 </div>
             </div>
         </div>
-        <!-- Bar Chart -->
+       <!-- Bar Chart -->
         <div class="col-md-6 mb-4">
             <div class="card shadow h-100">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold" style="color:#3F1457">Bar chart</h6>
+                    <h6 class="m-0 font-weight-bold" style="color:#3F1457">Bar chart (Entries & Exits)</h6>
                 </div>
                 <div class="card-body p-3 d-flex align-items-center justify-content-center" style="height:400px; min-height:320px;">
                     <canvas id="barChart" style="height:100% !important; width:100% !important; max-height: 350px;"></canvas>
@@ -93,7 +93,7 @@
         <div class="col-12 mb-4">
             <div class="card shadow h-100" style="width:100%;">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold" style="color:#3F1457">Vehicle Trend (Today)</h6>
+                    <h6 class="m-0 font-weight-bold" style="color:#3F1457">Vehicle Trend (Today) - Entries & Exits</h6>
                 </div>
                 <div class="card-body p-3 d-flex align-items-center justify-content-center" style="height:400px; min-height:320px; width:100%;">
                     <canvas id="areaChart" style="height:100% !important; width:100% !important;"></canvas>
@@ -182,7 +182,7 @@
         }
     });
 
-    // BAR CHART
+    // BAR CHART: Entries & Exits (side by side)
     const barCtx = document.getElementById('barChart').getContext('2d');
     const barChart = new Chart(barCtx, {
         type: 'bar',
@@ -201,31 +201,43 @@
                 x: {
                     title: { display: true, text: 'Hour' }
                 }
+            },
+            plugins: {
+                legend: { display: true }
             }
         }
     });
 
-    // AREA CHART (FULL WIDTH)
+    // AREA CHART: Entries & Exits (as filled lines)
     const areaCtx = document.getElementById('areaChart').getContext('2d');
     const areaChart = new Chart(areaCtx, {
         type: 'line',
         data: {
             labels: {!! json_encode($barChartData['labels']) !!},
-            datasets: [{
-                label: 'Number of Vehicles',
-                data: {!! json_encode($barChartData['datasets'][0]['data']) !!},
-                backgroundColor: 'rgba(189, 178, 255, 0.25)',
-                borderColor: 'rgba(24, 32, 177, 0.57)',
-                pointBackgroundColor: '#6837b9',
-                fill: true,
-                tension: 0.35
-            }]
+            datasets: [
+                {
+                    label: 'Entries',
+                    data: {!! json_encode($barChartData['datasets'][0]['data']) !!},
+                    backgroundColor: 'rgba(49, 150, 212, 0.2)',
+                    borderColor: '#4F8DFD',
+                    fill: true,
+                    tension: 0.35
+                },
+                {
+                    label: 'Exits',
+                    data: {!! json_encode($barChartData['datasets'][1]['data']) !!},
+                    backgroundColor: 'rgba(254, 157, 176, 0.84)',
+                    borderColor: '#fe9db0',
+                    fill: true,
+                    tension: 0.35
+                }
+            ]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: false }
+                legend: { display: true }
             },
             scales: {
                 y: {
